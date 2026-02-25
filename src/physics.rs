@@ -33,7 +33,7 @@ pub fn generate_particles(num_particles: usize) -> Vec<Particle> {
         let theta = sample_theta(l, m);
         let phi = sample_phi();
         let pos = spherical_to_cartesian(r, theta, phi);
-        let color = inferno(r, theta, phi, n, l, m);
+        let color = get_particle_color(r, theta, phi, n, l, m);
         particles.push(Particle { position: pos, color });
     }
     particles
@@ -154,7 +154,7 @@ fn associated_legendre(l: i32, m: i32, x: f64) -> f64 {
     pm1m
 }
 
-fn inferno(r: f64, theta: f64, _phi: f64, n: i32, l: i32, m: i32) -> glm::Vec4 {
+fn get_particle_color(r: f64, theta: f64, _phi: f64, n: i32, l: i32, m: i32) -> glm::Vec4 {
     let rho = 2.0 * r / (n as f64 * A0);
     let laguerre = associated_laguerre(n - l - 1, 2 * l + 1, rho);
     let norm_part1 = (2.0 / (n as f64 * A0)).powi(3);
@@ -162,18 +162,16 @@ fn inferno(r: f64, theta: f64, _phi: f64, n: i32, l: i32, m: i32) -> glm::Vec4 {
     let r_wave = (norm_part1 * norm_part2).sqrt() * (-rho / 2.0).exp() * rho.powi(l) * laguerre;
     let angular = associated_legendre(l, m.abs(), theta.cos());
     let intensity = r_wave * r_wave * angular * angular;
-    heatmap_fire(intensity * 1.5 * (5.0f64).powi(n))
+    heatmap_cool(intensity * 1.5 * (5.0f64).powi(n))
 }
 
-fn heatmap_fire(value: f64) -> glm::Vec4 {
+fn heatmap_cool(value: f64) -> glm::Vec4 {
     let value = value.max(0.0).min(1.0);
     let colors = [
-        glm::vec4(0.0, 0.0, 0.0, 1.0), // Black
-        glm::vec4(0.5, 0.0, 0.99, 1.0),// Purple
-        glm::vec4(0.8, 0.0, 0.0, 1.0), // Red
-        glm::vec4(1.0, 0.5, 0.0, 1.0), // Orange
-        glm::vec4(1.0, 1.0, 0.0, 1.0), // Yellow
-        glm::vec4(1.0, 1.0, 1.0, 1.0), // White
+        glm::vec4(0.0, 0.0, 0.0, 1.0),   // Black
+        glm::vec4(0.0, 0.0, 0.5, 1.0),   // Dark Blue
+        glm::vec4(0.0, 0.8, 1.0, 1.0),   // Cyan
+        glm::vec4(1.0, 1.0, 1.0, 1.0),   // White
     ];
     let scaled_v = value * (colors.len() - 1) as f64;
     let i = scaled_v as usize;

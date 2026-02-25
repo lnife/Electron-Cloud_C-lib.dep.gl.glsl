@@ -45,7 +45,7 @@ fn main() {
 
     // --- Standard Setup ---
     let mut glfw = glfw::init(glfw::fail_on_errors).unwrap();
-    let (win_width, win_height) = (800, 600);
+    let (win_width, win_height) = (1280, 720);
     let (mut window, events) = glfw
         .create_window(win_width as u32, win_height as u32, "Atom Simulator", glfw::WindowMode::Windowed)
         .expect("Failed to create GLFW window.");
@@ -91,7 +91,7 @@ fn main() {
 
         // --- Rendering ---
         unsafe {
-            gl::ClearColor(0.1, 0.1, 0.1, 1.0);
+            gl::ClearColor(0.3, 0.3, 0.3, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
             shader_program.use_program();
 
